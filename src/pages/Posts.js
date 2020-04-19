@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import PostLists from "../components/PostLists";
-import data from "../db.json";
+import postStore from "../stores/postStore";
+import { getPosts } from "../actions/postActions";
 
 function PostPage() {
-    const [posts, setposts] = useState([]);
+    const [posts, setPosts] = useState(postStore.getPosts());
+
     useEffect(() => {
-        setposts(data["posts"]);
+        postStore.addChangeListener(onChange);
+        if (postStore.getPosts().length === 0) getPosts();
+        return () => postStore.removeChangeListener(onChange);
     }, []);
+
+    function onChange() {
+        setPosts(postStore.getPosts());
+    }
 
     return (
         <div>
